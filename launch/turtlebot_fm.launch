@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="turtlebot_fm" type="load_map_yaml" name="load_map_yaml">
+  </node>
+
+  <node pkg="turtlebot_fm" type="send_path" name="send_path">
+  </node>
+
+</launch>
