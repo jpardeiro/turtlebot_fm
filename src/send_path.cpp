@@ -11,16 +11,19 @@
 
 #include "turtlebot_fm/pathFM.h"
 #include "turtlebot_fm/pathTurtlebot.h"
+#include "turtlebot_fm/InitAngle.h"
 
 #define PI 4*atan(1)
 
 double x = 0, y = 0; // Position of the robot in X and Y axis
 double x_ang, y_ang, z_ang, w_ang; // Rotation of the robot in quaternion form
 double alpha; // Yaw rotation in rads
+double init_angle = 0; // Initial angle
 
 turtlebot_fm::pathFM pathFM; // Path from FM planner
 bool enable_path=false;
 bool enable_loop=true;
+bool enable_rot=false;
 
 // Obtain path from FM planner
 void chatterCallback_path(const turtlebot_fm::pathFM::ConstPtr &msg)
@@ -28,6 +31,13 @@ void chatterCallback_path(const turtlebot_fm::pathFM::ConstPtr &msg)
     enable_path = msg->enable;
     pathFM.positions = msg -> positions;
     pathFM.vel_rate = msg -> vel_rate;
+}
+
+// Obtain initial rotation
+void chatterCallback_rot(const turtlebot_fm::InitAngle::ConstPtr &msg)
+{
+    enable_rot = msg->enable;
+    init_angle = msg->angle;
 }
 
 // Check if the robot have been finished its move
@@ -62,6 +72,7 @@ int main(int argc, char **argv)
     ros::Subscriber sub_path = n.subscribe("path_FM", 1000, chatterCallback_path);
     ros::Subscriber sub_enable = n.subscribe("move_complete", 1000, chatterCallback_enable);
     ros::Subscriber sub_odom = n.subscribe("odom", 1000, chatterCallback_odom);
+    ros::Subscriber sub_rot = n.subscribe("Init_Rotation", 1000, chatterCallback_rot);
 
     ros::Publisher chatter_path = n.advertise<turtlebot_fm::pathTurtlebot>("move_data", 1000);
 
@@ -71,11 +82,6 @@ int main(int argc, char **argv)
     int goal;
     int interval = 10;
 
-    double init_angle = 0;
-
-    std::cout << "Set initial rotation of the robot: " << std::endl;
-    std::cin >> init_angle;
-
     std::ofstream ofs;
     ofs.open ("file1.txt",  std::ofstream::out | std::ofstream::trunc);
     ofs.close();
@@ -84,11 +90,11 @@ int main(int argc, char **argv)
     {
         turtlebot_fm::pathTurtlebot path_turtlebot;
 
-        if (enable_path==true)
+        if (enable_path && enable_rot)
         {
             if (init<(int)pathFM.positions.size())
             {
-                if (enable_loop == true)
+                if (enable_loop)
                 {
                     ROS_INFO("Path prepared");
                     double x0, x1, y0, y1, vel_rate;
@@ -143,7 +149,7 @@ int main(int argc, char **argv)
                     path_turtlebot.forward_distance = euc_dist;
                     path_turtlebot.turn_distance = angle ;
                     path_turtlebot.enable = true;
-                    path_turtlebot.velocity_rate = vel_rate/2;
+                    path_turtlebot.velocity_rate = vel_rate/3;
 
                     chatter_path.publish(path_turtlebot);
 

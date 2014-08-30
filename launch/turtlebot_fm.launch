@@ -5,4 +5,6 @@
   <node pkg="turtlebot_fm" type="send_path" name="send_path">
   </node>
 
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_fm)/rviz/robot_configuration.rviz" />
+
 </launch>
