@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
     int init=1;
     int goal;
-    int interval = 10;
+    int interval = 20;
 
     std::ofstream ofs;
     ofs.open ("file1.txt",  std::ofstream::out | std::ofstream::trunc);

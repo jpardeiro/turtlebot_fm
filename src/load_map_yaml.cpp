@@ -80,10 +80,6 @@ int main(int argc, char **argv)
         turtlebot_fm::InitAndGoal initandgoal;
         turtlebot_fm::InitAngle initangle;
 
-        
-
-        
-
         // Only works when all the information have been recieved
         if (enable_map==true && enable_metadata==true)
         {
@@ -92,7 +88,6 @@ int main(int argc, char **argv)
             map.gridSize.push_back(height);
             map.resolution = resolution;
             map.ndims = 2;
-
             
             nDGridMap<FMCell, ndims_> grid;
 
@@ -129,7 +124,6 @@ int main(int argc, char **argv)
             std::cout << "Set initial rotation of the robot (in rads): " << std::endl;
             std::cin >> init_angle;
 
-            
             GridPoints::selectMapPoints(grid, coords_init, coords_goal);
 
             int idx, goal;
