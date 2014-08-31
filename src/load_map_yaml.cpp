@@ -12,10 +12,6 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <tf/transform_broadcaster.h>
-#include <gazebo/gazebo.hh>
-#include "gazebo_msgs/ModelState.h"
-#include "gazebo_msgs/ModelStates.h"
-#include <gazebo_msgs/SetModelState.h>
 
 #include "../include/turtlebot_fm/io/gridpoints.hpp"
 #include "../include/turtlebot_fm/fmdata/fmcell.h"
@@ -158,33 +154,6 @@ int main(int argc, char **argv)
             Init_Rotation.publish(initangle);
 
             ROS_INFO("Initial Rotation published");
-
-            geometry_msgs::Pose start_pose;
-            start_pose.position.x = coords_init[0]*resolution;
-            start_pose.position.y = coords_init[1]*resolution;
-            start_pose.position.z = 0.1;
-            start_pose.orientation.x = 0.0;
-            start_pose.orientation.y = 0.0;
-            start_pose.orientation.z = 0.0;
-            start_pose.orientation.w = 0.0;
-
-            geometry_msgs::Twist start_twist;
-            start_twist.linear.x = 0.0;
-            start_twist.linear.y = 0.0;
-            start_twist.linear.z = 0.0;
-            start_twist.angular.x = 0.0;
-            start_twist.angular.y = 0.0;
-            start_twist.angular.z = init_angle;
-
-            gazebo_msgs::ModelState modelstate;
-            modelstate.model_name = (std::string) "mobile_base";
-            modelstate.pose = start_pose;
-            modelstate.twist = start_twist;
-
-            ros::ServiceClient client = n.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
-            gazebo_msgs::SetModelState setmodelstate;
-            setmodelstate.request.model_state = modelstate;
-            client.call(setmodelstate);
 
             transform.setOrigin( tf::Vector3((coords_init[0]+1)*resolution, (coords_init[1]+1)*resolution, 0.0) );
             tf::Quaternion q;
