@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
     int init=1;
     int goal;
-    int interval = 20;
+    int interval = 10;
 
     std::ofstream ofs;
     ofs.open ("file1.txt",  std::ofstream::out | std::ofstream::trunc);
@@ -99,6 +99,7 @@ int main(int argc, char **argv)
                     ROS_INFO("Path prepared");
                     double x0, x1, y0, y1, vel_rate;
 
+		            double euc_dist= 0;
                     if (init+interval < (int)pathFM.positions.size())
                     {
                         goal = init+interval;
@@ -110,6 +111,18 @@ int main(int argc, char **argv)
                         y1=pathFM.positions[goal].dims[1];
 
                         vel_rate = pathFM.vel_rate[init];
+
+            			euc_dist=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
+
+            			while (euc_dist < 0.1 && goal < (int)pathFM.positions.size())
+                        {
+                            goal++;
+                            x1=pathFM.positions[goal].dims[0];
+                            y1=pathFM.positions[goal].dims[1];
+
+                            euc_dist=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
+                        }
+
                     }
                     else
                     {
@@ -121,6 +134,8 @@ int main(int argc, char **argv)
                         y1=pathFM.positions[goal].dims[1];
 
                         vel_rate = pathFM.vel_rate[init];
+
+			            euc_dist=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
 
                         goal++;
                     }
@@ -138,7 +153,7 @@ int main(int argc, char **argv)
                     if (angle < 0 && std::abs(angle) > PI)
                         angle = angle + 2*PI;
 
-                    double euc_dist=std::sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
+
 
                     ofs.open ("file1.txt",  std::ios::out | std::ios::app);
 

@@ -62,7 +62,6 @@ int main(int argc, char **argv)
     ros::Publisher mapFM = n.advertise<turtlebot_fm::map>("map_FM", 1000);
     ros::Publisher Init_And_Goal = n.advertise<turtlebot_fm::InitAndGoal>("Init_and_Goal_Points", 1000);
     ros::Publisher Init_Rotation = n.advertise<turtlebot_fm::InitAngle>("Init_Rotation", 1000);
-    //ros::Publisher pub_ = n.advertise<geometry_msgs::PoseWithCovarianceStamped>("initialpose", 1000);
     ros::Subscriber subscriber_map = n.subscribe("map", 1000, chatterCallback_map);
     ros::Subscriber subscriber_metadata = n.subscribe("map_metadata", 1000, chatterCallback_metadata);
 
@@ -168,8 +167,7 @@ int main(int argc, char **argv)
         }
 
         if (enable_broadcaster)
-            while (ros::ok())
-                br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/map", "/odom"));
+            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/map", "/odom"));
 
         ros::spinOnce();
 
